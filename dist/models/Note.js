@@ -58,7 +58,7 @@ const noteSchema = new mongoose_1.Schema({
         trim: true,
         maxlength: 100
     },
-    language: {
+    programmingLanguage: {
         type: String,
         required: true,
         default: 'javascript',
@@ -102,7 +102,7 @@ noteSchema.index({ isRevision: 1 });
 noteSchema.index({ priority: 1 });
 noteSchema.index({ createdAt: -1 });
 noteSchema.index({ updatedAt: -1 });
-// Text search index
+// Text search index (no longer conflicts with language field)
 noteSchema.index({
     title: 'text',
     content: 'text',

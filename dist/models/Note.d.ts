@@ -4,7 +4,7 @@ export interface INote extends Document {
     content: string;
     tags: string[];
     category: string;
-    language: string;
+    programmingLanguage: string;
     description?: string;
     isRevision: boolean;
     priority: 'low' | 'medium' | 'high';

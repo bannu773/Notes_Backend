@@ -7,6 +7,56 @@ const express_1 = __importDefault(require("express"));
 const Note_1 = require("../models/Note");
 const validation_1 = require("../middleware/validation");
 const router = express_1.default.Router();
+// SPECIFIC ROUTES FIRST - must come before /:id route
+// GET /api/notes/categories/list - Get all unique categories
+router.get('/categories/list', async (req, res) => {
+    try {
+        const categories = await Note_1.Note.distinct('category');
+        res.json(categories);
+    }
+    catch (error) {
+        console.error('Error fetching categories:', error);
+        res.status(500).json({ error: 'Failed to fetch categories' });
+    }
+});
+// GET /api/notes/tags/list - Get all unique tags
+router.get('/tags/list', async (req, res) => {
+    try {
+        const tags = await Note_1.Note.distinct('tags');
+        res.json(tags);
+    }
+    catch (error) {
+        console.error('Error fetching tags:', error);
+        res.status(500).json({ error: 'Failed to fetch tags' });
+    }
+});
+// GET /api/notes/stats/overview - Get notes statistics
+router.get('/stats/overview', async (req, res) => {
+    try {
+        const [total, revisionCount, priorityStats, categoryStats] = await Promise.all([
+            Note_1.Note.countDocuments(),
+            Note_1.Note.countDocuments({ isRevision: true }),
+            Note_1.Note.aggregate([
+                { $group: { _id: '$priority', count: { $sum: 1 } } }
+            ]),
+            Note_1.Note.aggregate([
+                { $group: { _id: '$category', count: { $sum: 1 } } },
+                { $sort: { count: -1 } }
+            ])
+        ]);
+        res.json({
+            total,
+            revisionCount,
+            priorityStats,
+            categoryStats
+        });
+    }
+    catch (error) {
+        console.error('Error fetching stats:', error);
+        res.status(500).json({ error: 'Failed to fetch statistics' });
+    }
+});
+// GENERAL ROUTES
 // GET /api/notes - Get all notes with optional filtering
 router.get('/', async (req, res) => {
     try {
@@ -46,6 +96,7 @@ router.get('/', async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch notes' });
     }
 });
+// DYNAMIC ROUTES LAST - must come after specific routes
 // GET /api/notes/:id - Get a specific note
 router.get('/:id', async (req, res) => {
     try {
@@ -99,54 +150,6 @@ router.delete('/:id', async (req, res) => {
     catch (error) {
         console.error('Error deleting note:', error);
         res.status(500).json({ error: 'Failed to delete note' });
-    }
-});
-// GET /api/notes/categories/list - Get all unique categories
-router.get('/categories/list', async (req, res) => {
-    try {
-        const categories = await Note_1.Note.distinct('category');
-        res.json(categories);
-    }
-    catch (error) {
-        console.error('Error fetching categories:', error);
-        res.status(500).json({ error: 'Failed to fetch categories' });
-    }
-});
-// GET /api/notes/tags/list - Get all unique tags
-router.get('/tags/list', async (req, res) => {
-    try {
-        const tags = await Note_1.Note.distinct('tags');
-        res.json(tags);
-    }
-    catch (error) {
-        console.error('Error fetching tags:', error);
-        res.status(500).json({ error: 'Failed to fetch tags' });
-    }
-});
-// GET /api/notes/stats/overview - Get notes statistics
-router.get('/stats/overview', async (req, res) => {
-    try {
-        const [total, revisionCount, priorityStats, categoryStats] = await Promise.all([
-            Note_1.Note.countDocuments(),
-            Note_1.Note.countDocuments({ isRevision: true }),
-            Note_1.Note.aggregate([
-                { $group: { _id: '$priority', count: { $sum: 1 } } }
-            ]),
-            Note_1.Note.aggregate([
-                { $group: { _id: '$category', count: { $sum: 1 } } },
-                { $sort: { count: -1 } }
-            ])
-        ]);
-        res.json({
-            total,
-            revisionCount,
-            priorityStats,
-            categoryStats
-        });
-    }
-    catch (error) {
-        console.error('Error fetching stats:', error);
-        res.status(500).json({ error: 'Failed to fetch statistics' });
     }
 });
 exports.default = router;
