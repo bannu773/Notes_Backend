@@ -16,10 +16,6 @@ export const validateNote = (req: Request, res: Response, next: NextFunction) =>
     return res.status(400).json({ error: 'Category is required' });
   }
   
-  if (!programmingLanguage || !programmingLanguage.trim()) {
-    return res.status(400).json({ error: 'Programming language is required' });
-  }
-  
   // Length validation
   if (title.length > 200) {
     return res.status(400).json({ error: 'Title must be less than 200 characters' });
