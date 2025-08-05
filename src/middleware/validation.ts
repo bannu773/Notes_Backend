@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 
 export const validateNote = (req: Request, res: Response, next: NextFunction) => {
-  const { title, content, category, language } = req.body;
+  const { title, content, category, programmingLanguage } = req.body;
   
   // Required field validation
   if (!title || !title.trim()) {
@@ -16,8 +16,8 @@ export const validateNote = (req: Request, res: Response, next: NextFunction) =>
     return res.status(400).json({ error: 'Category is required' });
   }
   
-  if (!language || !language.trim()) {
-    return res.status(400).json({ error: 'Language is required' });
+  if (!programmingLanguage || !programmingLanguage.trim()) {
+    return res.status(400).json({ error: 'Programming language is required' });
   }
   
   // Length validation
