@@ -9,15 +9,13 @@ export const connectToDatabase = async (): Promise<void> => {
     }
 
     console.log('🔄 Attempting to connect to MongoDB...');
-    console.log('📍 Database URL:', mongoUri.replace(/\/\/([^:]+):([^@]+)@/, '//***:***@')); // Hide credentials in logs
+    console.log('📍 Database URL:', mongoUri.replace(/\/\/([^:]+):([^@]+)@/, '//***:***@'));
 
+    // Minimal options - only include well-supported options for Render deployment
     const options = {
       maxPoolSize: 10,
-      serverSelectionTimeoutMS: 10000, // Increased timeout
+      serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 45000,
-      bufferCommands: false,
-      connectTimeoutMS: 10000, // Added connection timeout
-      // Removed authMechanism - let MongoDB handle this automatically
     };
 
     await mongoose.connect(mongoUri, options);
@@ -33,11 +31,14 @@ export const connectToDatabase = async (): Promise<void> => {
       console.log('📤 MongoDB disconnected');
     });
 
-    process.on('SIGINT', async () => {
-      await mongoose.connection.close();
-      console.log('🔚 MongoDB connection closed due to app termination');
-      process.exit(0);
-    });
+    // Only add SIGINT handler if not in production (Render handles this)
+    if (process.env.NODE_ENV !== 'production') {
+      process.on('SIGINT', async () => {
+        await mongoose.connection.close();
+        console.log('🔚 MongoDB connection closed due to app termination');
+        process.exit(0);
+      });
+    }
 
   } catch (error) {
     console.error('❌ Error connecting to MongoDB:', error);
