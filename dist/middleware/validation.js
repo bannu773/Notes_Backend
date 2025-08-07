@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateNote = void 0;
 const validateNote = (req, res, next) => {
-    const { title, content, category, language } = req.body;
+    const { title, content, category, programmingLanguage } = req.body;
     // Required field validation
     if (!title || !title.trim()) {
         return res.status(400).json({ error: 'Title is required' });
@@ -12,9 +12,6 @@ const validateNote = (req, res, next) => {
     }
     if (!category || !category.trim()) {
         return res.status(400).json({ error: 'Category is required' });
-    }
-    if (!language || !language.trim()) {
-        return res.status(400).json({ error: 'Language is required' });
     }
     // Length validation
     if (title.length > 200) {
