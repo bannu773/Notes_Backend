@@ -45,18 +45,15 @@ const noteSchema = new mongoose_1.Schema({
     content: {
         type: String,
         required: true,
-        maxlength: 10000
     },
     tags: [{
             type: String,
             trim: true,
-            maxlength: 50
         }],
     category: {
         type: String,
         required: true,
         trim: true,
-        maxlength: 100
     },
     programmingLanguage: {
         type: String,
@@ -67,7 +64,6 @@ const noteSchema = new mongoose_1.Schema({
     description: {
         type: String,
         trim: true,
-        maxlength: 500
     },
     isRevision: {
         type: Boolean,
@@ -80,11 +76,9 @@ const noteSchema = new mongoose_1.Schema({
     },
     codeContent: {
         type: String,
-        maxlength: 20000
     },
     topicContent: {
         type: String,
-        maxlength: 15000
     },
     type: {
         type: String,
