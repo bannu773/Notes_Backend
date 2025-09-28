@@ -58,7 +58,7 @@ router.get('/stats/overview', async (req: Request, res: Response) => {
 // GET /api/notes - Get all notes with optional filtering
 router.get('/', async (req: Request, res: Response) => {
   try {
-    const { category, isRevision, priority, search, limit = 100, skip = 0 } = req.query;
+    const { category, isRevision, priority, search, limit, skip = 0 } = req.query;
     
     const filter: any = {};
     
