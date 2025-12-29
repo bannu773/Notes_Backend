@@ -210,6 +210,7 @@ router.get('/', async (req: Request, res: Response) => {
       orderMap.set(order.noteId.toString(), order.order);
     });
     
+    
     // Transform notes to include proper id mapping and order
     const transformedNotes = notes.map((note: any) => ({
       ...note,
